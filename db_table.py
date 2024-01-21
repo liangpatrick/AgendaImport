@@ -64,14 +64,15 @@ class db_table:
     #
     # \param columns  array<string>         columns to be fetched. if empty, will query all the columns
     # \param where    dict<string, string>  where filters to be applied. only combine them using AND and only check for strict equality
-    #
+    #                 dict<string, list>    where filters to be applied. only combine them using OR and only check for string equality
+    # \param andOr    String                used to determine whether the query will be AND or OR; defaults to AND
     # \return [ { col1: val1, col2: val2, col3: val3 } ]
     #
     # Example table.select(["name"], { "id": "42" })
     #         table.select()
     #         table.select(where={ "name": "John" })
     #
-    def select(self, columns = [], where = {}):
+    def select(self, columns = [], where = {}, andOr = "AND"):
         # by default, query all columns
         if not columns:
             columns = [ k for k in self.schema ]
@@ -80,10 +81,15 @@ class db_table:
         columns_query_string = ", ".join(columns)
         query                = "SELECT %s FROM %s" % (columns_query_string, self.name)
         # build where query string
-        if where:
-            where_query_string = [ "%s = '%s'" % (k,v) for k,v in where.iteritems() ]
+        if where and andOr == "AND":
+            where_query_string = [ "%s = '%s'" % (k,v) for k,v in where.items() ]
             query             += " WHERE " + ' AND '.join(where_query_string)
-        
+        elif where and andOr == "OR":
+            where_query_string = []
+            for key in where.keys():
+                for values in where[key]:
+                    where_query_string.append("%s = '%s'" % (key,values))
+            query             += " WHERE " + ' OR '.join(where_query_string)
         result = []
         # SELECT id, name FROM users [ WHERE id=42 AND name=John ]
         #
