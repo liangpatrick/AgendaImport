@@ -9,11 +9,11 @@ agenda = xlrd.open_workbook(file_path)
 agenda_sheet = agenda.sheet_by_index(0)
 
 # Initializing tables for SQLite DB
-main_table = db_table(schemas.MAIN, schemas.main_table_schema())
+main_table = db_table(schemas.MAIN, schemas.MAIN_TABLE_SCHEMA)
 
-subsession_table = db_table(schemas.SUBSSESSION, schemas.subsession_table_schema())
+subsession_table = db_table(schemas.SUBSSESSION, schemas.SUBSSESSION_TABLE_SCHEMA)
 
-speaker_table = db_table(schemas.SPEAKER, schemas.speaker_table_schema())
+speaker_table = db_table(schemas.SPEAKER, schemas.SPEAKER_TABLE_SCHEMA)
 
 parent_session_id = 0
 # Iterate through rows and insert into the SQLite table
@@ -47,7 +47,7 @@ for row_idx in range(15, agenda_sheet.nrows):
         speakers = item["speaker"].split(';')
         for speaker in speakers:
             speaker_table.insert({
-                "speaker_name": speaker,
+                "speaker": speaker,
                 "session_id": item["session_id"]
             })
 
