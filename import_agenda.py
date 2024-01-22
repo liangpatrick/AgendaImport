@@ -5,6 +5,9 @@ import xlrd
 import schemas
 
 # Load the Excel file using xlrd
+if len(sys.argv) != 2:
+    raise Exception(
+        "Sorry, incorrect number of commandline arguments: " + str(len(sys.argv))+" .Please try again with 2 arguments(if an argument is multiple words, wrap it in quotations so it\'s considered one argument like this:\"Room 201\")")
 file_path = sys.argv[1]
 agenda = xlrd.open_workbook(file_path)
 agenda_sheet = agenda.sheet_by_index(0)
