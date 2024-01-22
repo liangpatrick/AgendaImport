@@ -1,3 +1,4 @@
+#!whova/bin/python3
 from db_table import db_table
 import sys
 import xlrd
